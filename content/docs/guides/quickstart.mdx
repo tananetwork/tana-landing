@@ -1,0 +1,113 @@
+---
+title: "Quick Start"
+description: "Deploy your first tana smart contract in 5 minutes"
+---
+
+# Quick Start
+
+This guide will help you deploy your first tana smart contract in just a few minutes.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Node.js 18+ installed
+- Bun runtime installed
+- A terminal/command line
+
+## Installation
+
+Install the tana CLI globally:
+
+```bash
+npm install -g @tana/cli
+```
+
+Verify the installation:
+
+```bash
+tana --version
+```
+
+## Create Your First Contract
+
+Create a new file called `hello.ts`:
+
+```typescript
+// hello.ts
+export async function contract() {
+  const caller = context.caller()
+  return {
+    message: `Hello, ${caller.username}!`,
+    timestamp: Date.now()
+  }
+}
+
+export async function get(req: Request) {
+  return {
+    message: "Hello from HTTP GET!"
+  }
+}
+```
+
+## Deploy the Contract
+
+Deploy your contract to the blockchain:
+
+```bash
+tana deploy contract hello.ts
+```
+
+You'll see output like:
+
+```
+✓ Contract deployed successfully
+  Contract ID: ctr_abc123
+  Owner: usr_youruser
+  Block: 42
+```
+
+## Test Your Contract
+
+Call your contract:
+
+```bash
+tana call ctr_abc123
+```
+
+Output:
+
+```json
+{
+  "message": "Hello, youruser!",
+  "timestamp": 1699564800000
+}
+```
+
+## Next Steps
+
+Now that you've deployed your first contract, learn more:
+
+- [Smart Contract Guide](/docs/guides/smart-contracts) - Learn the 4-function structure
+- [CLI Commands](/docs/cli/commands) - Explore all CLI commands
+- [API Reference](/docs/api/contracts) - Use the REST API
+
+## Common Issues
+
+### "Command not found: tana"
+
+Make sure you installed the CLI globally with the `-g` flag:
+
+```bash
+npm install -g @tana/cli
+```
+
+### "No blockchain running"
+
+Start the ledger service:
+
+```bash
+tana start
+```
+
+This starts all required services on your local machine.

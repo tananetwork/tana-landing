@@ -1,0 +1,187 @@
+---
+title: "CLI Commands"
+description: "Complete reference for all tana CLI commands"
+---
+
+# CLI Commands
+
+The tana CLI provides commands for managing your blockchain, deploying contracts, and interacting with the network.
+
+## Installation
+
+Install the tana CLI globally:
+
+```bash
+npm install -g @tana/cli
+```
+
+## Global Options
+
+These options work with all commands:
+
+- `--help` - Show help for a command
+- `--version` - Show CLI version
+- `--config <path>` - Use custom config file
+
+## Commands
+
+### `tana new`
+
+Create new blockchain entities.
+
+#### `tana new chain`
+
+Initialize a new blockchain.
+
+```bash
+tana new chain [name]
+```
+
+**Options:**
+- `--port <number>` - HTTP port (default: 8080)
+- `--no-autostart` - Don't start services automatically
+
+**Example:**
+```bash
+tana new chain my-blockchain
+```
+
+#### `tana new user`
+
+Create a new user account.
+
+```bash
+tana new user <username>
+```
+
+**Example:**
+```bash
+tana new user alice
+```
+
+#### `tana new contract`
+
+Generate a contract template.
+
+```bash
+tana new contract <name>
+```
+
+**Example:**
+```bash
+tana new contract token
+```
+
+### `tana deploy`
+
+Deploy entities to the blockchain.
+
+#### `tana deploy user`
+
+Deploy a user to the blockchain.
+
+```bash
+tana deploy user <username>
+```
+
+**Example:**
+```bash
+tana deploy user alice
+```
+
+#### `tana deploy contract`
+
+Deploy a smart contract.
+
+```bash
+tana deploy contract <file>
+```
+
+**Options:**
+- `--owner <userId>` - Contract owner (default: current user)
+
+**Example:**
+```bash
+tana deploy contract ./token.ts
+```
+
+### `tana start`
+
+Start all tana services.
+
+```bash
+tana start
+```
+
+This starts:
+- Ledger service (port 8080)
+- Identity service (port 8090)
+- Edge server (port 8180)
+- Block producer
+- Event listener
+
+**Options:**
+- `--ledger-port <number>` - Ledger port
+- `--identity-port <number>` - Identity port
+- `--edge-port <number>` - Edge server port
+
+### `tana stop`
+
+Stop all running services.
+
+```bash
+tana stop
+```
+
+### `tana status`
+
+Check service status.
+
+```bash
+tana status
+```
+
+Shows:
+- Running services
+- Port numbers
+- Process IDs
+
+### `tana call`
+
+Call a contract function.
+
+```bash
+tana call <contractId> [input]
+```
+
+**Example:**
+```bash
+tana call ctr_abc123 '{"amount": 100}'
+```
+
+## Configuration
+
+Config file location: `~/.config/tana/config.json`
+
+**Example config:**
+```json
+{
+  "ledgerPort": 8080,
+  "identityPort": 8090,
+  "edgePort": 8180,
+  "databaseUrl": "postgres://localhost:5432/tana"
+}
+```
+
+## Environment Variables
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `REDIS_URL` - Redis connection string
+- `PORT` - Default service port
+- `NODE_ENV` - Environment (development/production)
+
+## Next Steps
+
+- [Deploy your first contract](/docs/guides/quickstart)
+- [Smart contract structure](/docs/guides/smart-contracts)
+- [API Reference](/docs/api/intro)
