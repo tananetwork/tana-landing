@@ -11,6 +11,8 @@ export interface DocFile {
   metadata: DocMetadata
   content: string
   html: string // Pre-compiled HTML from build time
+  codeBlocks: Array<{lang: string, code: string}> // Extracted code blocks for Monaco
+  tableOfContents: TableOfContentsItem[] // Pre-computed TOC from build time
 }
 
 export interface SidebarSection {
@@ -127,22 +129,7 @@ export function generateSidebar(): SidebarSection[] {
   return sections
 }
 
-// Extract headings from markdown for table of contents
-export function extractHeadings(content: string): TableOfContentsItem[] {
-  const headingRegex = /^(#{2,3})\s+(.+)$/gm
-  const headings: TableOfContentsItem[] = []
-  let match
-
-  while ((match = headingRegex.exec(content)) !== null) {
-    const level = match[1].length
-    const text = match[2].trim()
-    const id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-
-    headings.push({ id, text, level })
-  }
-
-  return headings
+// Get table of contents for a doc (pre-computed at build time)
+export function getTableOfContents(doc: DocFile): TableOfContentsItem[] {
+  return doc.tableOfContents
 }

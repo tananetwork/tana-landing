@@ -84,6 +84,41 @@ curl "http://localhost:8080/blocks?limit=10&offset=0"
 - [ ] Self
 - [ ] Admin
 
+### Example
+
+**Request:**
+
+```bash
+curl "http://localhost:8080/blocks?limit=2"
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "blk_xyz789",
+    "height": 42,
+    "hash": "0x1a2b3c4d5e6f...",
+    "previousHash": "0x9z8y7x6w5v...",
+    "stateRoot": "0x4d5e6f7g8h...",
+    "timestamp": "2024-11-08T12:00:06.000Z",
+    "transactionCount": 5,
+    "producerId": "usr_leader1"
+  },
+  {
+    "id": "blk_abc123",
+    "height": 41,
+    "hash": "0x9z8y7x6w5v...",
+    "previousHash": "0x6g5h4i3j2k...",
+    "stateRoot": "0x7j8k9l0m1n...",
+    "timestamp": "2024-11-08T12:00:00.000Z",
+    "transactionCount": 3,
+    "producerId": "usr_leader1"
+  }
+]
+```
+
 </details>
 
 <details>
@@ -342,6 +377,54 @@ curl http://localhost:8080/blocks/hash/0x1a2b3c4d5e6f...
 - [ ] Admin
 
 </details>
+
+### Quick Reference
+
+**List all blocks:**
+
+```bash
+curl "http://localhost:8080/blocks?limit=10"
+```
+
+```json
+[
+  {
+    "id": "blk_xyz789",
+    "height": 42,
+    "hash": "0x1a2b3c...",
+    "timestamp": "2024-11-08T12:00:06.000Z",
+    "transactionCount": 5
+  }
+]
+```
+
+**Get latest block:**
+
+```bash
+curl "http://localhost:8080/blocks/latest"
+```
+
+```json
+{
+  "id": "blk_xyz789",
+  "height": 42,
+  "hash": "0x1a2b3c...",
+  "transactionCount": 5,
+  "transactions": [...]
+}
+```
+
+**Get block by height:**
+
+```bash
+curl "http://localhost:8080/blocks/42"
+```
+
+**Get block by hash:**
+
+```bash
+curl "http://localhost:8080/blocks/hash/0x1a2b3c..."
+```
 
 ### Method Not Allowed
 

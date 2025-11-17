@@ -2,19 +2,18 @@
 
 import { useState } from 'react'
 import { Navbar } from '@/components/landing/Navbar'
-import { DocsSidebar } from './DocsSidebar'
-import { SidebarSection } from '@/lib/docs'
+import { DocsSidebar } from '@/components/docs/DocsSidebar'
+import { generateSidebar } from '@/lib/docs'
 import { Menu, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-interface DocsLayoutProps {
+export default function DocsLayout({
+  children,
+}: {
   children: React.ReactNode
-  sidebar: SidebarSection[]
-  slug: string[]
-}
-
-export function DocsLayout({ children, sidebar, slug }: DocsLayoutProps) {
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const sidebar = generateSidebar()
 
   return (
     <div className="h-screen bg-background text-foreground overflow-hidden flex flex-col">
@@ -43,14 +42,12 @@ export function DocsLayout({ children, sidebar, slug }: DocsLayoutProps) {
 
       {/* Two-panel layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar - Navigation */}
+        {/* Left Sidebar - Navigation (persists across route changes) */}
         <DocsSidebar sections={sidebar} isOpen={sidebarOpen} />
 
-        {/* Main Content */}
+        {/* Main Content (changes on navigation) */}
         <main className="flex-1 overflow-y-auto scrollbar-hide bg-secondary/30">
-          <div className="max-w-5xl mx-auto px-8 py-12">
-            {children}
-          </div>
+          {children}
         </main>
       </div>
     </div>

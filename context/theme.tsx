@@ -27,7 +27,9 @@ export function ThemeContextProvider({ children, initialTheme }: ThemeContextPro
 export function useThemeContext() {
     const context = useContext(ThemeContext)
     if (!context) {
-        throw new Error('useThemeContext must be used within a ThemeContextProvider')
+        // During SSR/pre-rendering, return default theme
+        // This allows pages to be pre-rendered without context
+        return { theme: 'dark' as Theme, setTheme: () => {} }
     }
     return context
 }

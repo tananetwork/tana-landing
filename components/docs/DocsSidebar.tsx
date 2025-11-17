@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SidebarSection } from '@/lib/docs'
-import { ChevronRight } from 'lucide-react'
 
 interface DocsSidebarProps {
   sections: SidebarSection[]
@@ -14,9 +13,11 @@ export function DocsSidebar({ sections, isOpen }: DocsSidebarProps) {
   const pathname = usePathname()
 
   return (
-    <aside className={`${
-      isOpen ? 'block' : 'hidden'
-    } md:block w-64 overflow-y-auto scrollbar-hide border-r border-border/30`}>
+    <aside
+      className={`${
+        isOpen ? 'block' : 'hidden'
+      } md:block w-64 overflow-y-auto scrollbar-hide border-r border-border/30`}
+    >
       <nav className="p-4 space-y-6">
         {sections.map((section, index) => (
           <div key={index}>
@@ -30,16 +31,15 @@ export function DocsSidebar({ sections, isOpen }: DocsSidebarProps) {
                   <li key={itemIndex}>
                     <Link
                       href={item.href}
+                      prefetch={true}
+                      scroll={false}
                       className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                         isActive
-                          ? 'bg-primary/10 text-primary font-semibold'
+                          ? 'bg-primary/10 text-primary font-medium'
                           : 'text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        {isActive && <ChevronRight className="w-4 h-4" />}
-                        <span>{item.label}</span>
-                      </div>
+                      {item.label}
                     </Link>
                   </li>
                 )

@@ -1,21 +1,9 @@
 import { notFound } from 'next/navigation'
-import { getAllDocs, getDoc, generateSidebar, extractHeadings } from '@/lib/docs'
-import { DocsLayout } from '@/components/docs/DocsLayout'
+import { getDoc } from '@/lib/docs'
+import { DocsContent } from '@/components/docs/DocsContent'
 
-// Force static generation for Cloudflare Workers
-export const dynamic = 'force-static'
-export const dynamicParams = false
-
-// Generate static params for all docs
-export async function generateStaticParams() {
-  const docs = getAllDocs()
-
-  return docs
-    .filter((doc) => doc.slug.length > 0) // Filter out root index (handled by /docs/page.tsx)
-    .map((doc) => ({
-      slug: doc.slug,
-    }))
-}
+// Force dynamic rendering for client-side features
+export const dynamic = 'force-dynamic'
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
@@ -42,12 +30,9 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
     notFound()
   }
 
-  const sidebar = generateSidebar()
-  const headings = extractHeadings(doc.content)
-
   return (
-    <DocsLayout sidebar={sidebar} headings={headings} slug={slug}>
-      <article className="prose prose-lg prose-invert max-w-none">
+    <div className="max-w-5xl mx-auto px-8 py-12">
+      <article className="max-w-none">
         <h1 className="text-4xl font-bold text-foreground mb-2">
           {doc.metadata.title}
         </h1>
@@ -57,11 +42,8 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
           </p>
         )}
 
-        <div
-          className="docs-content"
-          dangerouslySetInnerHTML={{ __html: doc.html }}
-        />
+        <DocsContent html={doc.html} codeBlocks={doc.codeBlocks} />
       </article>
-    </DocsLayout>
+    </div>
   )
 }
