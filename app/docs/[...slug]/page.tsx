@@ -12,9 +12,11 @@ import remarkGfm from 'remark-gfm'
 export async function generateStaticParams() {
   const docs = getAllDocs()
 
-  return docs.map((doc) => ({
-    slug: doc.slug,
-  }))
+  return docs
+    .filter((doc) => doc.slug.length > 0) // Filter out root index (handled by /docs/page.tsx)
+    .map((doc) => ({
+      slug: doc.slug,
+    }))
 }
 
 // Generate metadata for SEO
