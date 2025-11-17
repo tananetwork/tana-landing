@@ -36,27 +36,34 @@ const highlighter = await createHighlighter({
   langs: ['typescript', 'javascript', 'bash', 'json', 'markdown', 'html', 'css'],
 })
 
-// Configure marked with syntax highlighting
-const marked = new Marked(
-  markedHighlight({
-    highlight(code, lang) {
-      try {
-        return highlighter.codeToHtml(code, {
-          lang: lang || 'text',
-          theme: 'github-dark',
-        })
-      } catch {
-        return code
-      }
-    },
-  }),
-  gfmHeadingId()
-)
+// Configure marked with syntax highlighting from Shiki
+const marked = new Marked(gfmHeadingId())
 
 // Enable GFM (GitHub Flavored Markdown)
 marked.setOptions({
   gfm: true,
   breaks: false,
+})
+
+// Use Shiki for code highlighting with proper HTML output
+marked.use({
+  async: true,
+  renderer: {
+    code({ text, lang }: { text: string; lang?: string }) {
+      const language = lang || 'text'
+      try {
+        const html = highlighter.codeToHtml(text, {
+          lang: language,
+          theme: 'github-dark',
+        })
+        // Add data-language attribute for the language badge
+        return html.replace('<pre class="shiki', `<pre data-language="${language}" class="shiki`)
+      } catch (e) {
+        // Fallback for unsupported languages
+        return `<pre data-language="${language}" class="shiki github-dark"><code>${text}</code></pre>`
+      }
+    },
+  },
 })
 
 async function convertToHtml(content: string): Promise<string> {

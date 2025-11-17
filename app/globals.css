@@ -163,11 +163,11 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
+
   .animate-scroll {
     animation: scroll 30s linear infinite;
   }
-  
+
   @keyframes scroll {
     0% {
       transform: translateX(0);
@@ -175,5 +175,40 @@
     100% {
       transform: translateX(-50%);
     }
+  }
+}
+
+/* Docs code block styling - theme-accurate */
+@layer components {
+  /* Override Shiki inline styles with theme colors */
+  .docs-content pre.shiki {
+    @apply bg-card border border-border rounded-lg my-4 overflow-x-auto;
+    background-color: oklch(0.08 0.01 240) !important; /* Use card color from theme */
+    padding: 1rem !important;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .docs-content pre.shiki code {
+    @apply font-mono text-sm;
+    background: transparent !important;
+    padding: 0;
+  }
+
+  .docs-content pre.shiki .line {
+    @apply block;
+    min-height: 1.4rem;
+  }
+
+  /* Inline code */
+  .docs-content :not(pre) > code {
+    @apply bg-muted text-foreground border border-border rounded px-1.5 py-0.5 text-sm font-mono;
+  }
+
+  /* Code block language badge */
+  .docs-content pre.shiki[data-language]:not([data-language="text"])::before {
+    content: attr(data-language);
+    @apply block text-muted-foreground text-xs uppercase tracking-wider mb-3 pb-2 border-b border-border/30;
+    font-family: var(--font-mono);
   }
 }
