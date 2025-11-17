@@ -8,6 +8,10 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypePrettyCode from 'rehype-pretty-code'
 import remarkGfm from 'remark-gfm'
 
+// Force static generation for Cloudflare Workers
+export const dynamic = 'force-static'
+export const dynamicParams = false
+
 // Generate static params for all docs
 export async function generateStaticParams() {
   const docs = getAllDocs()
