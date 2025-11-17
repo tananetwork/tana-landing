@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "bundle:docs": "bun scripts/bundle-docs.ts",
+    "prebuild": "bun run bundle:docs",
     "dev": "next dev",
     "build": "next build",
-    "build:cloudflare": "opennextjs-cloudflare build",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "build:cloudflare": "bun run bundle:docs && opennextjs-cloudflare build",
+    "preview": "bun run bundle:docs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "bun run bundle:docs && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "start": "next start",
     "lint": "eslint"
   },

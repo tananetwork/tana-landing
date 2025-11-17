@@ -1,0 +1,42 @@
+[
+  {
+    "id": "hello-world",
+    "title": "Hello World",
+    "description": "Basic smart contract that stores and retrieves a greeting message",
+    "code": "import { kv } from 'tana/kv'\nimport { context } from 'tana/context'\nimport type { Request } from 'tana/net'\n\n// Initialize contract with default greeting\nexport async function init() {\n  await kv.put('greeting', 'Hello, Tana!')\n  return { initialized: true }\n}\n\n// Update greeting (on-chain)\nexport async function contract() {\n  const input = context.input()\n  const caller = context.caller()\n  \n  if (!input.greeting) {\n    throw new Error('Greeting required')\n  }\n  \n  await kv.put('greeting', input.greeting)\n  await kv.put('lastUpdatedBy', caller.id)\n  \n  return { success: true, greeting: input.greeting }\n}\n\n// Get greeting via HTTP\nexport async function get(req: Request) {\n  const greeting = await kv.get('greeting')\n  const lastUpdatedBy = await kv.get('lastUpdatedBy')\n  \n  return {\n    greeting,\n    lastUpdatedBy\n  }\n}",
+    "result": { "greeting": "Hello, Tana!", "lastUpdatedBy": "usr_abc123" },
+    "category": "Basic"
+  },
+  {
+    "id": "token-balance",
+    "title": "Token Balance Tracker",
+    "description": "Track token balances for multiple users",
+    "code": "import { kv } from 'tana/kv'\nimport { context } from 'tana/context'\nimport type { Request } from 'tana/net'\n\n// Initialize with supply\nexport async function init() {\n  const owner = context.owner()\n  await kv.put(`balance:${owner.id}`, '1000000')\n  await kv.put('totalSupply', '1000000')\n  return { initialized: true, supply: 1000000 }\n}\n\n// Transfer tokens (on-chain)\nexport async function contract() {\n  const input = context.input()\n  const caller = context.caller()\n  \n  const fromBalance = parseInt(await kv.get(`balance:${caller.id}`) || '0')\n  const toBalance = parseInt(await kv.get(`balance:${input.to}`) || '0')\n  const amount = parseInt(input.amount)\n  \n  if (fromBalance < amount) {\n    throw new Error('Insufficient balance')\n  }\n  \n  await kv.put(`balance:${caller.id}`, String(fromBalance - amount))\n  await kv.put(`balance:${input.to}`, String(toBalance + amount))\n  \n  return {\n    success: true,\n    from: caller.id,\n    to: input.to,\n    amount\n  }\n}\n\n// Get balance via HTTP\nexport async function get(req: Request) {\n  const userId = req.tana.caller?.id\n  if (!userId) {\n    return { error: 'Authentication required' }\n  }\n  \n  const balance = await kv.get(`balance:${userId}`) || '0'\n  const totalSupply = await kv.get('totalSupply')\n  \n  return { balance: parseInt(balance), totalSupply }\n}",
+    "result": { "success": true, "from": "usr_abc123", "to": "usr_def456", "amount": 100 },
+    "category": "Finance"
+  },
+  {
+    "id": "voting-system",
+    "title": "Simple Voting",
+    "description": "Create polls and vote on options",
+    "code": "import { kv } from 'tana/kv'\nimport { context } from 'tana/context'\nimport type { Request } from 'tana/net'\n\n// Initialize voting contract\nexport async function init() {\n  const input = context.input()\n  \n  await kv.put('question', input.question)\n  await kv.put('options', JSON.stringify(input.options))\n  await kv.put('votes', JSON.stringify({}))\n  \n  return { initialized: true }\n}\n\n// Cast vote (on-chain)\nexport async function contract() {\n  const input = context.input()\n  const caller = context.caller()\n  \n  const votes = JSON.parse(await kv.get('votes') || '{}')\n  \n  // Check if already voted\n  if (votes[caller.id]) {\n    throw new Error('Already voted')\n  }\n  \n  // Record vote\n  votes[caller.id] = input.option\n  await kv.put('votes', JSON.stringify(votes))\n  \n  return { success: true, voted: input.option }\n}\n\n// Get results via HTTP\nexport async function get(req: Request) {\n  const question = await kv.get('question')\n  const options = JSON.parse(await kv.get('options') || '[]')\n  const votes = JSON.parse(await kv.get('votes') || '{}')\n  \n  // Tally votes\n  const results: Record<string, number> = {}\n  for (const vote of Object.values(votes)) {\n    results[vote as string] = (results[vote as string] || 0) + 1\n  }\n  \n  return {\n    question,\n    options,\n    results,\n    totalVotes: Object.keys(votes).length\n  }\n}",
+    "result": { "question": "Favorite feature?", "options": ["Speed", "Security", "Simplicity"], "results": { "Speed": 5, "Security": 3, "Simplicity": 7 }, "totalVotes": 15 },
+    "category": "Governance"
+  },
+  {
+    "id": "user-registry",
+    "title": "User Registry",
+    "description": "Register users with profile information",
+    "code": "import { kv } from 'tana/kv'\nimport { context } from 'tana/context'\nimport type { Request } from 'tana/net'\n\n// Initialize registry\nexport async function init() {\n  await kv.put('userCount', '0')\n  return { initialized: true }\n}\n\n// Register user (on-chain)\nexport async function contract() {\n  const input = context.input()\n  const caller = context.caller()\n  \n  // Check if already registered\n  const existing = await kv.get(`user:${caller.id}`)\n  if (existing) {\n    throw new Error('Already registered')\n  }\n  \n  // Validate input\n  if (!input.username || !input.bio) {\n    throw new Error('Username and bio required')\n  }\n  \n  // Store profile\n  const profile = {\n    username: input.username,\n    bio: input.bio,\n    joinedAt: Date.now()\n  }\n  \n  await kv.put(`user:${caller.id}`, JSON.stringify(profile))\n  \n  // Increment count\n  const count = parseInt(await kv.get('userCount') || '0')\n  await kv.put('userCount', String(count + 1))\n  \n  return { success: true, profile }\n}\n\n// Get profile via HTTP\nexport async function get(req: Request) {\n  const userId = req.tana.caller?.id\n  if (!userId) {\n    return { error: 'Authentication required' }\n  }\n  \n  const profile = await kv.get(`user:${userId}`)\n  const userCount = await kv.get('userCount')\n  \n  return {\n    profile: profile ? JSON.parse(profile) : null,\n    totalUsers: parseInt(userCount || '0')\n  }\n}",
+    "result": { "success": true, "profile": { "username": "alice", "bio": "Blockchain enthusiast", "joinedAt": 1699564800000 } },
+    "category": "Identity"
+  },
+  {
+    "id": "escrow",
+    "title": "Escrow Contract",
+    "description": "Hold funds until conditions are met",
+    "code": "import { kv } from 'tana/kv'\nimport { context } from 'tana/context'\nimport { block } from 'tana/block'\nimport type { Request } from 'tana/net'\n\n// Create escrow\nexport async function init() {\n  const input = context.input()\n  const owner = context.owner()\n  \n  await kv.put('buyer', input.buyer)\n  await kv.put('seller', input.seller)\n  await kv.put('amount', input.amount)\n  await kv.put('status', 'pending')\n  await kv.put('arbiter', owner.id)\n  \n  return { initialized: true }\n}\n\n// Execute escrow actions (on-chain)\nexport async function contract() {\n  const input = context.input()\n  const caller = context.caller()\n  \n  const buyer = await kv.get('buyer')\n  const seller = await kv.get('seller')\n  const arbiter = await kv.get('arbiter')\n  const status = await kv.get('status')\n  \n  if (status !== 'pending') {\n    throw new Error('Escrow already completed')\n  }\n  \n  if (input.action === 'release' && caller.id === arbiter) {\n    await kv.put('status', 'released')\n    return { success: true, action: 'released', to: seller }\n  }\n  \n  if (input.action === 'refund' && caller.id === arbiter) {\n    await kv.put('status', 'refunded')\n    return { success: true, action: 'refunded', to: buyer }\n  }\n  \n  throw new Error('Unauthorized')\n}\n\n// Get escrow status via HTTP\nexport async function get(req: Request) {\n  const buyer = await kv.get('buyer')\n  const seller = await kv.get('seller')\n  const amount = await kv.get('amount')\n  const status = await kv.get('status')\n  const arbiter = await kv.get('arbiter')\n  \n  return { buyer, seller, amount, status, arbiter }\n}",
+    "result": { "success": true, "action": "released", "to": "usr_seller123" },
+    "category": "Finance"
+  }
+]

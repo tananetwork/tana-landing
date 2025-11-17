@@ -1,8 +1,5 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-
-const docsDirectory = path.join(process.cwd(), 'content/docs')
+// Import pre-bundled docs for Cloudflare Workers compatibility
+import bundledDocsData from './bundled-docs.json'
 
 export interface DocMetadata {
   title: string
@@ -32,37 +29,9 @@ export interface TableOfContentsItem {
   level: number
 }
 
-// Get all doc files recursively
+// Get all doc files from pre-bundled JSON
 export function getAllDocs(): DocFile[] {
-  const docs: DocFile[] = []
-
-  function readDir(dir: string, slugParts: string[] = []) {
-    const files = fs.readdirSync(dir)
-
-    for (const file of files) {
-      const filePath = path.join(dir, file)
-      const stat = fs.statSync(filePath)
-
-      if (stat.isDirectory()) {
-        readDir(filePath, [...slugParts, file])
-      } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
-        const fileContents = fs.readFileSync(filePath, 'utf8')
-        const { data, content } = matter(fileContents)
-
-        const fileName = file.replace(/\.mdx?$/, '')
-        const slug = fileName === 'index' ? slugParts : [...slugParts, fileName]
-
-        docs.push({
-          slug,
-          metadata: data as DocMetadata,
-          content,
-        })
-      }
-    }
-  }
-
-  readDir(docsDirectory)
-  return docs
+  return bundledDocsData as DocFile[]
 }
 
 // Get a single doc by slug
