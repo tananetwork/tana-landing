@@ -186,18 +186,21 @@
     background-color: oklch(0.08 0.01 240) !important; /* Use card color from theme */
     padding: 1rem !important;
     font-size: 0.875rem;
-    line-height: 1.7;
+    line-height: 1.5 !important;
   }
 
   .docs-content pre.shiki code {
     @apply font-mono text-sm;
     background: transparent !important;
     padding: 0;
+    line-height: 1.5 !important;
+    display: block;
   }
 
   .docs-content pre.shiki .line {
-    @apply block;
-    min-height: 1.4rem;
+    display: block;
+    line-height: 1.5 !important;
+    min-height: auto !important;
   }
 
   /* Inline code */
