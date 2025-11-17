@@ -1,12 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getAllDocs, getDoc, generateSidebar, extractHeadings } from '@/lib/docs'
 import { DocsLayout } from '@/components/docs/DocsLayout'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import { mdxComponents } from '@/mdx-components'
-import rehypeSlug from 'rehype-slug'
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import rehypePrettyCode from 'rehype-pretty-code'
-import remarkGfm from 'remark-gfm'
 
 // Force static generation for Cloudflare Workers
 export const dynamic = 'force-static'
@@ -63,36 +57,10 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
           </p>
         )}
 
-        <div className="docs-content">
-          <MDXRemote
-            source={doc.content}
-            components={mdxComponents}
-            options={{
-              mdxOptions: {
-                remarkPlugins: [remarkGfm],
-                rehypePlugins: [
-                  rehypeSlug,
-                  [
-                    rehypePrettyCode,
-                    {
-                      theme: 'github-dark',
-                      keepBackground: false,
-                    },
-                  ],
-                  [
-                    rehypeAutolinkHeadings,
-                    {
-                      behavior: 'wrap',
-                      properties: {
-                        className: ['anchor'],
-                      },
-                    },
-                  ],
-                ],
-              },
-            }}
-          />
-        </div>
+        <div
+          className="docs-content"
+          dangerouslySetInnerHTML={{ __html: doc.html }}
+        />
       </article>
     </DocsLayout>
   )

@@ -2,11 +2,18 @@
 /**
  * Pre-bundle all docs markdown files into a static JSON file
  * for Cloudflare Workers compatibility (no runtime filesystem access)
+ *
+ * Pre-compiles markdown to HTML at build time to avoid runtime MDX processing
+ * which is incompatible with Cloudflare Workers
  */
 
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { Marked } from 'marked'
+import { markedHighlight } from 'marked-highlight'
+import { gfmHeadingId } from 'marked-gfm-heading-id'
+import { createHighlighter } from 'shiki'
 
 interface DocMetadata {
   title: string
@@ -17,15 +24,55 @@ interface DocFile {
   slug: string[]
   metadata: DocMetadata
   content: string
+  html: string // Pre-compiled HTML
 }
 
 const docsDirectory = path.join(process.cwd(), 'content/docs')
 const outputPath = path.join(process.cwd(), 'lib/bundled-docs.json')
 
-function getAllDocs(): DocFile[] {
+// Initialize Shiki highlighter
+const highlighter = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['typescript', 'javascript', 'bash', 'json', 'markdown', 'html', 'css'],
+})
+
+// Configure marked with syntax highlighting
+const marked = new Marked(
+  markedHighlight({
+    highlight(code, lang) {
+      try {
+        return highlighter.codeToHtml(code, {
+          lang: lang || 'text',
+          theme: 'github-dark',
+        })
+      } catch {
+        return code
+      }
+    },
+  }),
+  gfmHeadingId()
+)
+
+// Enable GFM (GitHub Flavored Markdown)
+marked.setOptions({
+  gfm: true,
+  breaks: false,
+})
+
+async function convertToHtml(content: string): Promise<string> {
+  try {
+    const html = await marked.parse(content)
+    return html as string
+  } catch (error) {
+    console.error('Error converting markdown:', error)
+    return `<p>Error rendering content</p>`
+  }
+}
+
+async function getAllDocs(): Promise<DocFile[]> {
   const docs: DocFile[] = []
 
-  function readDir(dir: string, slugParts: string[] = []) {
+  async function readDir(dir: string, slugParts: string[] = []) {
     const files = fs.readdirSync(dir)
 
     for (const file of files) {
@@ -33,7 +80,7 @@ function getAllDocs(): DocFile[] {
       const stat = fs.statSync(filePath)
 
       if (stat.isDirectory()) {
-        readDir(filePath, [...slugParts, file])
+        await readDir(filePath, [...slugParts, file])
       } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
         const fileContents = fs.readFileSync(filePath, 'utf8')
         const { data, content } = matter(fileContents)
@@ -41,22 +88,26 @@ function getAllDocs(): DocFile[] {
         const fileName = file.replace(/\.mdx?$/, '')
         const slug = fileName === 'index' ? slugParts : [...slugParts, fileName]
 
+        // Convert markdown to HTML at build time
+        const html = await convertToHtml(content)
+
         docs.push({
           slug,
           metadata: data as DocMetadata,
-          content,
+          content, // Keep original for search/indexing
+          html,
         })
       }
     }
   }
 
-  readDir(docsDirectory)
+  await readDir(docsDirectory)
   return docs
 }
 
 // Generate the bundle
 console.log('📦 Bundling docs...')
-const docs = getAllDocs()
+const docs = await getAllDocs()
 const bundleContent = JSON.stringify(docs, null, 2)
 
 // Write to output file

@@ -10,6 +10,7 @@ export interface DocFile {
   slug: string[]
   metadata: DocMetadata
   content: string
+  html: string // Pre-compiled HTML from build time
 }
 
 export interface SidebarSection {
