@@ -53,28 +53,19 @@ This creates a standalone `tana` binary at `cli/dist/tana`.
 ### Option 1: Quick Start with Tana CLI
 
 ```bash
-# Start databases (PostgreSQL and Redis)
-npm run db:up
-
-# Start all Tana services (mesh, t4, ledger)
-bun cli/main.ts start
-
-# In another terminal, create a blockchain
-bun cli/main.ts new chain local
-
 # Create a user
 bun cli/main.ts new user @alice --name "Alice"
 
-# Check status
-bun cli/main.ts status
+# Start Tana
+bun cli/main.ts start
 ```
 
-This starts:
-- ✅ PostgreSQL (via db:up)
-- ✅ Redis (via db:up)
-- ✅ Mesh Service (via start)
-- ✅ T4 Service (via start)
-- ✅ Ledger Service (via start) - http://localhost:8080
+This automatically starts all required services:
+- ✅ PostgreSQL
+- ✅ Redis
+- ✅ Mesh Service
+- ✅ T4 Service
+- ✅ Ledger Service - http://localhost:8080
 
 ### Option 2: All Services with mprocs
 
@@ -93,16 +84,25 @@ This starts all services including the playground and other development tools.
 - `Ctrl+A` then `K` - Kill a process
 - `Arrow keys` - Navigate
 
-### Option 3: Individual Services
+### Option 3: Manual Database Management
+
+If you need to manually manage databases:
 
 ```bash
-# Start database infrastructure
+# Start databases only
 npm run db:up
 
-# Start Tana services individually
-bun cli/main.ts start       # All Tana services (mesh, t4, ledger)
-npm run dev:playground      # Playground (port 4321)
+# Stop databases
+npm run db:down
+
+# Restart databases
+npm run db:restart
+
+# View database logs
+npm run db:logs
 ```
+
+Note: `tana start` will automatically start required databases if they're not running.
 
 ## Environment Configuration
 
