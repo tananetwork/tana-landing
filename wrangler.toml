@@ -1,5 +1,5 @@
 main = ".open-next/worker.js"
-name = "tana-landing"
+name = "tanawebsite"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
