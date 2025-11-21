@@ -35,10 +35,10 @@ export function AnimatedTerminalWithScreenshot({
         }, 50)
         return () => clearTimeout(timeout)
       } else {
-        // Command complete, show screenshot after 1 second
+        // Command complete, show screenshot after 3 seconds
         const timeout = setTimeout(() => {
           setShowScreenshot(true)
-        }, 1000)
+        }, 3000)
         return () => clearTimeout(timeout)
       }
     } else {
@@ -74,9 +74,9 @@ export function AnimatedTerminalWithScreenshot({
         </div>
 
         {/* Fixed height container to prevent layout shift */}
-        <div className="h-[350px] flex items-center justify-center">
+        <div className="h-[350px] flex items-start justify-start">
           {!showScreenshot ? (
-            <div className="w-full">
+            <div className="w-full pt-2">
               <div className="text-foreground">
                 <span className="text-primary">$</span> {getCurrentCommand()}
                 {showCursor && currentChar < command.length && (
