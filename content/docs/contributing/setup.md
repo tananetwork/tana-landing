@@ -50,7 +50,33 @@ This creates a standalone `tana` binary at `cli/dist/tana`.
 
 ## Start Development Environment
 
-### Option 1: All Services with mprocs (Recommended)
+### Option 1: Quick Start with Tana CLI
+
+```bash
+# Start databases (PostgreSQL and Redis)
+npm run db:up
+
+# Start all Tana services (mesh, t4, ledger)
+bun cli/main.ts start
+
+# In another terminal, create a blockchain
+bun cli/main.ts new chain local
+
+# Create a user
+bun cli/main.ts new user @alice --name "Alice"
+
+# Check status
+bun cli/main.ts status
+```
+
+This starts:
+- ✅ PostgreSQL (via db:up)
+- ✅ Redis (via db:up)
+- ✅ Mesh Service (via start)
+- ✅ T4 Service (via start)
+- ✅ Ledger Service (via start) - http://localhost:8080
+
+### Option 2: All Services with mprocs
 
 ```bash
 npm run dev
@@ -58,13 +84,7 @@ npm run dev
 ./dev.sh
 ```
 
-This starts:
-- ✅ PostgreSQL (auto)
-- ✅ Redis (auto)
-- ✅ Ledger Service (auto) - http://localhost:8080
-- ✅ Playground (auto) - http://localhost:4321
-- ⏸️ Contracts Service (manual)
-- ⏸️ Node Service (manual)
+This starts all services including the playground and other development tools.
 
 **mprocs shortcuts:**
 - `Tab` - Switch between processes
@@ -73,16 +93,14 @@ This starts:
 - `Ctrl+A` then `K` - Kill a process
 - `Arrow keys` - Navigate
 
-### Option 2: Individual Services
+### Option 3: Individual Services
 
 ```bash
 # Start database infrastructure
 npm run db:up
 
-# Start individual services
-bun cli/main.ts start      # Ledger service (port 8080)
-npm run dev:contracts       # Contracts (port 8081)
-npm run dev:node            # Blockchain node (port 9933)
+# Start Tana services individually
+bun cli/main.ts start       # All Tana services (mesh, t4, ledger)
 npm run dev:playground      # Playground (port 4321)
 ```
 
@@ -111,6 +129,20 @@ NODE_PORT=9933
 # Environment
 NODE_ENV=development
 ```
+
+## Initialize Validator (Optional)
+
+If you want to run as a validator node:
+
+```bash
+# Initialize validator with custom ports
+bun cli/main.ts init validator --ws-port 9000 --http-port 9001
+
+# Or use default ports
+bun cli/main.ts init validator
+```
+
+This sets up your node to participate in consensus and validate blocks.
 
 ## Testing
 
