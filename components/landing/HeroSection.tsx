@@ -60,24 +60,6 @@ export function HeroSection() {
 
         {/* Additional terminal examples */}
         <div className="mt-24 space-y-16">
-          {/* Background service */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left order-2 lg:order-1">
-              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                Run as a Background Service
-              </h3>
-              <p className="text-lg text-muted-foreground">
-                Start Tana in the background and keep it running while you work on other tasks.
-              </p>
-            </div>
-            <div className="order-1 lg:order-2">
-              <AnimatedTerminalWithScreenshot
-                command="tana start --daemon"
-                align="right"
-              />
-            </div>
-          </div>
-
           {/* TUI */}
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="order-1">

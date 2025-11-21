@@ -64,16 +64,19 @@ export function AnimatedTerminalWithScreenshot({
   return (
     <div className={`${align === 'left' ? 'lg:pr-8' : 'lg:pl-8'}`}>
       <div className="bg-card/95 backdrop-blur-sm border border-border rounded-lg p-6 font-mono text-sm shadow-2xl">
-        {!showScreenshot ? (
-          <>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="text-muted-foreground ml-2">terminal</span>
-            </div>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          <span className="text-muted-foreground ml-2">
+            {showScreenshot ? screenshotAlt : 'terminal'}
+          </span>
+        </div>
 
-            <div className="space-y-2 min-h-[50px]">
+        {/* Fixed height container to prevent layout shift */}
+        <div className="h-[350px] flex items-center justify-center">
+          {!showScreenshot ? (
+            <div className="w-full">
               <div className="text-foreground">
                 <span className="text-primary">$</span> {getCurrentCommand()}
                 {showCursor && currentChar < command.length && (
@@ -81,27 +84,18 @@ export function AnimatedTerminalWithScreenshot({
                 )}
               </div>
             </div>
-          </>
-        ) : (
-          <>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="text-muted-foreground ml-2">{screenshotAlt}</span>
-            </div>
-
-            <div className="rounded-lg overflow-hidden bg-secondary/30 border border-border/50">
+          ) : (
+            <div className="w-full h-full rounded-lg overflow-hidden bg-secondary/30 border border-border/50">
               {screenshotPath ? (
                 <Image
                   src={screenshotPath}
                   alt={screenshotAlt}
                   width={800}
                   height={600}
-                  className="w-full h-auto"
+                  className="w-full h-full object-contain"
                 />
               ) : (
-                <div className="w-full h-[300px] flex items-center justify-center text-muted-foreground">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                   <div className="text-center space-y-2">
                     <div className="text-4xl">📸</div>
                     <div className="text-sm">Screenshot Placeholder</div>
@@ -110,8 +104,8 @@ export function AnimatedTerminalWithScreenshot({
                 </div>
               )}
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
