@@ -8,13 +8,20 @@ interface AnimatedTerminalWithScreenshotProps {
   screenshotPath?: string
   screenshotAlt?: string
   align?: 'left' | 'right'
+  // Timing configuration (in milliseconds)
+  typingSpeed?: number          // Time per character (default: 50ms)
+  pauseBeforeScreenshot?: number // Pause after typing completes (default: 3000ms)
+  screenshotDuration?: number    // How long to show screenshot (default: 5000ms)
 }
 
 export function AnimatedTerminalWithScreenshot({
   command,
   screenshotPath,
   screenshotAlt = 'Screenshot',
-  align = 'right'
+  align = 'right',
+  typingSpeed = 50,
+  pauseBeforeScreenshot = 3000,
+  screenshotDuration = 5000
 }: AnimatedTerminalWithScreenshotProps) {
   const [currentChar, setCurrentChar] = useState(0)
   const [showScreenshot, setShowScreenshot] = useState(false)
@@ -32,23 +39,23 @@ export function AnimatedTerminalWithScreenshot({
       if (currentChar < command.length) {
         const timeout = setTimeout(() => {
           setCurrentChar(currentChar + 1)
-        }, 50)
+        }, typingSpeed)
         return () => clearTimeout(timeout)
       } else {
-        // Command complete, show screenshot after 3 seconds
+        // Command complete, show screenshot after pause
         const timeout = setTimeout(() => {
           setShowScreenshot(true)
-        }, 3000)
+        }, pauseBeforeScreenshot)
         return () => clearTimeout(timeout)
       }
     } else {
-      // Show screenshot for 5 seconds, then reset
+      // Show screenshot, then reset
       const timeout = setTimeout(() => {
         resetCycle()
-      }, 5000)
+      }, screenshotDuration)
       return () => clearTimeout(timeout)
     }
-  }, [currentChar, showScreenshot, command])
+  }, [currentChar, showScreenshot, command, typingSpeed, pauseBeforeScreenshot, screenshotDuration])
 
   useEffect(() => {
     const cursorInterval = setInterval(() => {

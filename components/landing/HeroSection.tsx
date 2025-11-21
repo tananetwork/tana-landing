@@ -67,6 +67,10 @@ export function HeroSection() {
                 command="tana start tui"
                 screenshotAlt="Tana TUI Interface"
                 align="left"
+                // Optional timing controls (all in milliseconds):
+                // typingSpeed={50}              // Time per character (default: 50ms)
+                // pauseBeforeScreenshot={3000}  // Pause after typing (default: 3000ms)
+                // screenshotDuration={5000}     // How long to show screenshot (default: 5000ms)
               />
             </div>
             <div className="text-center lg:text-right order-2">
