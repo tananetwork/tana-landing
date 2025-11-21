@@ -1,6 +1,7 @@
 'use client'
 
 import { AnimatedTerminal } from './AnimatedTerminal'
+import { AnimatedTerminalWithScreenshot } from './AnimatedTerminalWithScreenshot'
 import { Button } from '@/components/ui/button'
 
 export function HeroSection() {
@@ -8,7 +9,7 @@ export function HeroSection() {
     <section className="relative px-4 py-24 lg:px-8">
       {/* Enhanced background for hero */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background/20 to-primary/5 backdrop-blur-sm"></div>
-      
+
       <div className="relative mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Text content */}
@@ -24,7 +25,7 @@ export function HeroSection() {
                 No native token required. Multi-currency support. CLI-first design. Build decentralized applications with tools you already know.
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold border border-primary/30 shadow-lg shadow-primary/20">
                 Get Started
@@ -54,6 +55,65 @@ export function HeroSection() {
           {/* Right side - Animated terminal */}
           <div className="lg:pl-8">
             <AnimatedTerminal />
+          </div>
+        </div>
+
+        {/* Additional terminal examples */}
+        <div className="mt-24 space-y-16">
+          {/* Background service */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left order-2 lg:order-1">
+              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                Run as a Background Service
+              </h3>
+              <p className="text-lg text-muted-foreground">
+                Start Tana in the background and keep it running while you work on other tasks.
+              </p>
+            </div>
+            <div className="order-1 lg:order-2">
+              <AnimatedTerminalWithScreenshot
+                command="tana start --daemon"
+                align="right"
+              />
+            </div>
+          </div>
+
+          {/* TUI */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="order-1">
+              <AnimatedTerminalWithScreenshot
+                command="tana start tui"
+                screenshotAlt="Tana TUI Interface"
+                align="left"
+              />
+            </div>
+            <div className="text-center lg:text-right order-2">
+              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                Terminal User Interface
+              </h3>
+              <p className="text-lg text-muted-foreground">
+                Interactive TUI for monitoring your blockchain with real-time updates and controls.
+              </p>
+            </div>
+          </div>
+
+          {/* WebUI */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left order-2 lg:order-1">
+              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                Web User Interface
+              </h3>
+              <p className="text-lg text-muted-foreground">
+                Launch the web-based dashboard to manage your blockchain from your browser.
+              </p>
+            </div>
+            <div className="order-1 lg:order-2">
+              <AnimatedTerminalWithScreenshot
+                command="tana start webui"
+                screenshotAlt="Tana Web Interface"
+                align="right"
+              />
+            </div>
           </div>
         </div>
       </div>
