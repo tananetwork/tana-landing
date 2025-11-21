@@ -63,19 +63,17 @@ export function AnimatedTerminalWithScreenshot({
 
   return (
     <div className={`${align === 'left' ? 'lg:pr-8' : 'lg:pl-8'}`}>
-      <div className="bg-card/95 backdrop-blur-sm border border-border rounded-lg p-6 font-mono text-sm shadow-2xl">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500"></div>
-          <span className="text-muted-foreground ml-2">
-            {showScreenshot ? screenshotAlt : 'terminal'}
-          </span>
-        </div>
+      {!showScreenshot ? (
+        <div className="bg-card/95 backdrop-blur-sm border border-border rounded-lg p-6 font-mono text-sm shadow-2xl">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <span className="text-muted-foreground ml-2">terminal</span>
+          </div>
 
-        {/* Fixed height container to prevent layout shift */}
-        <div className="h-[350px] flex items-start justify-start">
-          {!showScreenshot ? (
+          {/* Fixed height container to prevent layout shift */}
+          <div className="h-[350px] flex items-start justify-start">
             <div className="w-full pt-2">
               <div className="text-foreground">
                 <span className="text-primary">$</span> {getCurrentCommand()}
@@ -84,29 +82,29 @@ export function AnimatedTerminalWithScreenshot({
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      ) : (
+        <div className="h-[422px] rounded-lg overflow-hidden bg-secondary/30 border border-border shadow-2xl">
+          {screenshotPath ? (
+            <Image
+              src={screenshotPath}
+              alt={screenshotAlt}
+              width={800}
+              height={600}
+              className="w-full h-full object-cover"
+            />
           ) : (
-            <div className="w-full h-full rounded-lg overflow-hidden bg-secondary/30 border border-border/50">
-              {screenshotPath ? (
-                <Image
-                  src={screenshotPath}
-                  alt={screenshotAlt}
-                  width={800}
-                  height={600}
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <div className="text-center space-y-2">
-                    <div className="text-4xl">📸</div>
-                    <div className="text-sm">Screenshot Placeholder</div>
-                    <div className="text-xs opacity-50">{screenshotAlt}</div>
-                  </div>
-                </div>
-              )}
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-card/95 backdrop-blur-sm">
+              <div className="text-center space-y-2">
+                <div className="text-4xl">📸</div>
+                <div className="text-sm">Screenshot Placeholder</div>
+                <div className="text-xs opacity-50">{screenshotAlt}</div>
+              </div>
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   )
 }
