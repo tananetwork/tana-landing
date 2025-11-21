@@ -16,7 +16,7 @@ export function DocsSidebar({ sections, isOpen }: DocsSidebarProps) {
     <aside
       className={`${
         isOpen ? 'block' : 'hidden'
-      } md:block w-64 overflow-y-auto scrollbar-hide border-r border-border/30`}
+      } md:block w-64 overflow-y-auto scrollbar-hide border-r border-border/30 mx-auto md:mx-0`}
     >
       <nav className="p-4 space-y-6">
         {sections.map((section, index) => (
