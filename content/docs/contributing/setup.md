@@ -50,7 +50,24 @@ This creates a standalone `tana` binary at `cli/dist/tana`.
 
 ## Start Development Environment
 
-### Option 1: All Services with mprocs (Recommended)
+### Option 1: Quick Start with Tana CLI
+
+```bash
+# Create a user
+bun cli/main.ts new user @alice --name "Alice"
+
+# Start Tana
+bun cli/main.ts start
+```
+
+This automatically starts all required services:
+- ✅ PostgreSQL
+- ✅ Redis
+- ✅ Mesh Service
+- ✅ T4 Service
+- ✅ Ledger Service - http://localhost:8080
+
+### Option 2: All Services with mprocs
 
 ```bash
 npm run dev
@@ -58,13 +75,7 @@ npm run dev
 ./dev.sh
 ```
 
-This starts:
-- ✅ PostgreSQL (auto)
-- ✅ Redis (auto)
-- ✅ Ledger Service (auto) - http://localhost:8080
-- ✅ Playground (auto) - http://localhost:4321
-- ⏸️ Contracts Service (manual)
-- ⏸️ Node Service (manual)
+This starts all services including the playground and other development tools.
 
 **mprocs shortcuts:**
 - `Tab` - Switch between processes
@@ -73,18 +84,25 @@ This starts:
 - `Ctrl+A` then `K` - Kill a process
 - `Arrow keys` - Navigate
 
-### Option 2: Individual Services
+### Option 3: Manual Database Management
+
+If you need to manually manage databases:
 
 ```bash
-# Start database infrastructure
+# Start databases only
 npm run db:up
 
-# Start individual services
-bun cli/main.ts start      # Ledger service (port 8080)
-npm run dev:contracts       # Contracts (port 8081)
-npm run dev:node            # Blockchain node (port 9933)
-npm run dev:playground      # Playground (port 4321)
+# Stop databases
+npm run db:down
+
+# Restart databases
+npm run db:restart
+
+# View database logs
+npm run db:logs
 ```
+
+Note: `tana start` will automatically start required databases if they're not running.
 
 ## Environment Configuration
 
@@ -111,6 +129,20 @@ NODE_PORT=9933
 # Environment
 NODE_ENV=development
 ```
+
+## Initialize Validator (Optional)
+
+If you want to run as a validator node:
+
+```bash
+# Initialize validator with custom ports
+bun cli/main.ts init validator --ws-port 9000 --http-port 9001
+
+# Or use default ports
+bun cli/main.ts init validator
+```
+
+This sets up your node to participate in consensus and validate blocks.
 
 ## Testing
 
